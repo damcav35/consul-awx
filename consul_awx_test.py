@@ -4,7 +4,7 @@ from pprint import pprint as print
 from unittest import mock
 
 import pytest
-from consul_awx import ConsulInventory, get_node_meta, get_node_meta_types
+from consul_awx import ConsulInventory, get_node_meta, get_node_meta_types, get_node_meta_filters
 
 
 @mock.patch("consul.base.Consul.Catalog.node")
@@ -228,3 +228,9 @@ def test_get_node_meta_types_configfile():
         path = fp.name
         assert get_node_meta_types(path) == {"cluster": "str"}
 
+def test_get_node_meta_filters_configfile():
+    with tempfile.NamedTemporaryFile() as fp:
+        fp.write(b"[consul_node_meta_filters]\nfilters=[\"test\"]")
+        fp.seek(0)
+        path = fp.name
+        assert get_node_meta_filters(path) == ["test"]
